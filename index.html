@@ -1,337 +1,733 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<title>Portfolio Builder</title>
-<style>
-  :root {
-    --bg: #000000;
-    --card: #0e0e10;
-    --card2: #16161a;
-    --text: #ffffff;
-    --muted: #8e8e93;
-    --green: #00c805;
-    --red: #ff5000;
-    --border: #1f1f23;
-    --gold: #ffb800;
-    --blue: #4a9eff;
-    --purple: #a78bfa;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    padding: 20px 16px 40px;
-    padding-top: max(20px, env(safe-area-inset-top));
-    padding-bottom: max(40px, env(safe-area-inset-bottom));
-    max-width: 560px;
-    margin: 0 auto;
-    line-height: 1.4;
-  }
-  h1 {
-    font-size: 26px; font-weight: 700; margin: 0 0 6px;
-    letter-spacing: -0.5px;
-  }
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Портфель</title>
 
-  .card {
-    background: var(--card);
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 14px;
-    border: 1px solid var(--border);
-  }
+  <style>
+    :root {
+      --page-bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-soft: #f5f5f7;
+      --text: #1d1d1f;
+      --secondary: #6e6e73;
+      --tertiary: #86868b;
+      --separator: rgba(60, 60, 67, 0.16);
+      --blue: #0071e3;
+      --blue-hover: #0077ed;
+      --green: #34c759;
+      --green-dark: #248a3d;
+      --gold: #ff9f0a;
+      --purple: #af52de;
+      --red: #ff3b30;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    }
 
-  .label-row {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin: 18px 0 10px;
-  }
-  .label-row:first-child { margin-top: 0; }
-  .label-row span:first-child { font-size: 14px; color: var(--muted); }
-  .label-row span:last-child { font-size: 18px; font-weight: 700; color: var(--green); }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 100%; height: 6px; border-radius: 3px;
-    background: var(--card2);
-    outline: none; margin: 0;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--green);
-    cursor: pointer;
-    border: 3px solid var(--bg);
-    box-shadow: 0 2px 8px rgba(0,200,5,0.4);
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--green); border: 3px solid var(--bg); cursor: pointer;
-  }
+    html {
+      background: var(--page-bg);
+    }
 
-  button {
-    width: 100%; padding: 17px;
-    border: 0; border-radius: 14px;
-    background: var(--green); color: #000;
-    font-size: 16px; font-weight: 700;
-    margin-top: 22px;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-  button:active { opacity: 0.85; transform: scale(0.98); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+        "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+    }
 
-  .status {
-    font-size: 12px; color: var(--muted);
-    margin-top: 12px; text-align: center;
-  }
+    .page {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: max(28px, env(safe-area-inset-top)) 20px
+        max(44px, env(safe-area-inset-bottom));
+    }
 
-  .total-value {
-    font-size: 44px; font-weight: 800; letter-spacing: -1.5px;
-    margin: 4px 0 6px;
-  }
-  .total-label { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .hero {
+      padding: 18px 2px 30px;
+    }
 
-  .bar {
-    height: 40px; border-radius: 12px;
-    display: flex; overflow: hidden;
-    margin: 16px 0 20px;
-    background: var(--card2);
-  }
-  .bar > div {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #000;
-    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    overflow: hidden; white-space: nowrap;
-  }
+    h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(34px, 7vw, 48px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+    }
 
-  .asset-row {
-    display: flex; align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .asset-row:last-child { border-bottom: 0; padding-bottom: 0; }
-  .asset-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    margin-right: 12px; flex-shrink: 0;
-  }
-  .asset-info { flex: 1; min-width: 0; }
-  .asset-name { font-size: 15px; font-weight: 600; }
-  .asset-ticker { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .asset-pct { font-size: 17px; font-weight: 700; text-align: right; }
-  .asset-amount { font-size: 12px; color: var(--muted); text-align: right; margin-top: 2px; }
+    .sub {
+      max-width: 500px;
+      margin: 12px 0 0;
+      color: var(--secondary);
+      font-size: 17px;
+      line-height: 1.45;
+      letter-spacing: -0.015em;
+    }
 
-  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
-  .metric {
-    background: var(--card2); border-radius: 12px; padding: 14px;
-  }
-  .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .metric-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
-  .metric-value.green { color: var(--green); }
-  .metric-value.red { color: var(--red); }
+    .card {
+      margin-bottom: 16px;
+      padding: 24px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
 
-  .disclaimer {
-    font-size: 11px; color: var(--muted); line-height: 1.6;
-    padding: 16px; background: var(--card);
-    border-radius: 14px; margin-top: 20px;
-    border: 1px solid var(--border);
-  }
-</style>
+    .section-title {
+      margin: 0 0 4px;
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+    }
+
+    .section-description {
+      margin: 0 0 22px;
+      color: var(--secondary);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .control-group + .control-group {
+      margin-top: 25px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .label-row span:first-child {
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+    }
+
+    .label-row span:last-child {
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: right;
+      letter-spacing: -0.02em;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      border-radius: 999px;
+      background: #d2d2d7;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.22),
+        0 3px 8px rgba(0, 113, 227, 0.25);
+      cursor: grab;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.08);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.22),
+        0 3px 8px rgba(0, 113, 227, 0.25);
+      cursor: grab;
+    }
+
+    input[type="range"]:focus-visible {
+      outline: 3px solid rgba(0, 113, 227, 0.28);
+      outline-offset: 7px;
+    }
+
+    button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 30px;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 980px;
+      background: var(--blue);
+      color: #ffffff;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      cursor: pointer;
+      transition:
+        background 0.18s ease,
+        transform 0.14s ease,
+        box-shadow 0.18s ease;
+    }
+
+    button:hover {
+      background: var(--blue-hover);
+      box-shadow: 0 5px 16px rgba(0, 113, 227, 0.22);
+    }
+
+    button:active {
+      transform: scale(0.985);
+      box-shadow: none;
+    }
+
+    button:focus-visible {
+      outline: 4px solid rgba(0, 113, 227, 0.28);
+      outline-offset: 3px;
+    }
+
+    .status {
+      margin: 14px 4px 0;
+      color: var(--tertiary);
+      font-size: 12px;
+      text-align: center;
+      letter-spacing: -0.005em;
+    }
+
+    #result {
+      animation: appear 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .portfolio-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .total-label {
+      margin-bottom: 4px;
+      color: var(--secondary);
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .total-value {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(36px, 8vw, 52px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.05em;
+    }
+
+    .portfolio-badge {
+      flex: 0 0 auto;
+      margin-top: 4px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(52, 199, 89, 0.12);
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .bar {
+      display: flex;
+      width: 100%;
+      height: 12px;
+      margin: 22px 0 24px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.035);
+    }
+
+    .bar > div {
+      min-width: 0;
+      height: 100%;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .asset-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--separator);
+    }
+
+    .asset-row:first-child {
+      padding-top: 0;
+    }
+
+    .asset-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .asset-dot {
+      width: 12px;
+      height: 12px;
+      margin-right: 14px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    .asset-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .asset-name {
+      overflow: hidden;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      letter-spacing: -0.015em;
+    }
+
+    .asset-ticker {
+      margin-top: 3px;
+      overflow: hidden;
+      color: var(--secondary);
+      font-size: 13px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .asset-values {
+      margin-left: 16px;
+      text-align: right;
+    }
+
+    .asset-pct {
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .asset-amount {
+      margin-top: 3px;
+      color: var(--secondary);
+      font-size: 13px;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .metric {
+      min-height: 116px;
+      padding: 17px;
+      border-radius: 18px;
+      background: var(--surface-soft);
+    }
+
+    .metric-label {
+      color: var(--secondary);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .metric-value {
+      margin-top: 9px;
+      color: var(--text);
+      font-size: 29px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-value.green {
+      color: var(--green-dark);
+    }
+
+    .disclaimer {
+      margin: 22px 2px 0;
+      color: var(--secondary);
+      font-size: 12px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+
+    .disclaimer b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    @media (max-width: 420px) {
+      .page {
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      .hero {
+        padding-bottom: 24px;
+      }
+
+      .portfolio-header {
+        display: block;
+      }
+
+      .portfolio-badge {
+        display: inline-block;
+        margin-top: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <main class="page">
+    <header class="hero">
+      <h1>Ваш портфель</h1>
+      <p class="sub">Настройте риск, цель и сумму — чтобы увидеть учебную модель распределения активов российского рынка.</p>
+    </header>
 
-<h1>Подбор портфеля</h1>
-<div class="sub">Российский рынок · учебный инструмент</div>
+    <section class="card" aria-labelledby="settings-title">
+      <h2 class="section-title" id="settings-title">Параметры</h2>
+      <p class="section-description">Выберите комфортный уровень риска и целевую доходность.</p>
 
-<div class="card">
-  <div class="label-row">
-    <span>Риск-профиль</span>
-    <span id="riskVal">5 / 10</span>
-  </div>
-  <input type="range" id="risk" min="1" max="10" value="5">
-
-  <div class="label-row">
-    <span>Целевая доходность</span>
-    <span id="retVal">12% годовых</span>
-  </div>
-  <input type="range" id="ret" min="4" max="30" value="12">
-
-  <div class="label-row">
-    <span>Сумма инвестиций</span>
-    <span id="sumVal">100 000 ₽</span>
-  </div>
-  <input type="range" id="sum" min="10000" max="10000000" step="10000" value="100000">
-
-  <button id="buildBtn" onclick="buildPortfolio()">Подобрать портфель</button>
-  <div class="status" id="status">Референсные значения российского рынка</div>
-</div>
-
-<div class="card" id="result" style="display:none">
-  <div class="total-label">Стоимость портфеля</div>
-  <div class="total-value" id="totalValue">100 000 ₽</div>
-
-  <div class="bar" id="bar"></div>
-  <div id="assets"></div>
-
-  <div class="metrics">
-    <div class="metric">
-      <div class="metric-label">Ожид. доходность</div>
-      <div class="metric-value green" id="expRet">—</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Ожид. риск</div>
-      <div class="metric-value" id="expRisk">—</div>
-    </div>
-  </div>
-</div>
-
-<div class="disclaimer">
-  <b>Не инвестиционная рекомендация.</b> Это учебная модель. Значения индексов — референсные ориентиры российского рынка, а не живые котировки. Реальные доходности зависят от рыночной ситуации, комиссий, налогов и валютных курсов. Прошлые результаты не гарантируют будущих. Инвестиции связаны с риском потери капитала. Перед принятием решений консультируйтесь с лицензированным советником.
-</div>
-
-<script>
-// ============ КЛАССЫ АКТИВОВ (российский рынок) ============
-const ASSETS = {
-  stocks: {
-    name: 'Акции РФ',
-    ticker: 'IMOEX',
-    color: '#00c805',
-    ret: 12, risk: 22,
-    reference: 'IMOEX ≈ 2750'
-  },
-  bonds: {
-    name: 'Облигации РФ',
-    ticker: 'RGBI',
-    color: '#4a9eff',
-    ret: 8, risk: 8,
-    reference: 'RGBI ≈ 108'
-  },
-  gold: {
-    name: 'Золото',
-    ticker: 'GLDRUB_TOM',
-    color: '#ffb800',
-    ret: 10, risk: 15,
-    reference: 'Золото ≈ 7500 ₽/г'
-  },
-  cash: {
-    name: 'Валюта',
-    ticker: 'USD/RUB',
-    color: '#a78bfa',
-    ret: 5, risk: 6,
-    reference: 'USD/RUB ≈ 92'
-  }
-};
-
-// ============ UI ============
-const riskEl = document.getElementById('risk');
-const retEl  = document.getElementById('ret');
-const sumEl  = document.getElementById('sum');
-
-riskEl.oninput = () => document.getElementById('riskVal').textContent = riskEl.value + ' / 10';
-retEl.oninput  = () => document.getElementById('retVal').textContent  = retEl.value + '% годовых';
-sumEl.oninput  = () => document.getElementById('sumVal').textContent  =
-  new Intl.NumberFormat('ru-RU').format(sumEl.value) + ' ₽';
-
-// ============ ЛОГИКА ПОДБОРА ============
-function recommendPortfolio(riskLevel, targetReturn) {
-  const r = Math.min(Math.max(riskLevel, 1), 10);
-  const t = Math.min(Math.max(targetReturn, 4), 30);
-
-  // Эвристика:
-  // - Акции растут с риском и целевой доходностью, максимум 80%
-  // - Облигации доминируют при низком риске
-  // - Золото — защитный актив, пик в середине шкалы риска
-  // - Валюта — защита от девальвации, больше при низком риске
-  let stocks = r * 8 + (t - 8) * 2;
-  let bonds  = Math.max(0, 80 - r * 7);
-  let gold   = Math.max(0, 18 - Math.abs(r - 5) * 3);
-  let cash   = Math.max(0, 25 - r * 2);
-
-  stocks = Math.min(stocks, 80);
-  bonds  = Math.min(bonds, 75);
-
-  // Нормализация к 100%
-  const sum = stocks + bonds + gold + cash;
-  stocks = stocks / sum * 100;
-  bonds  = bonds  / sum * 100;
-  gold   = gold   / sum * 100;
-  cash   = cash   / sum * 100;
-
-  // Ожидаемые метрики портфеля
-  const weights = { stocks, bonds, gold, cash };
-  let expRet = 0, expRisk = 0;
-  for (const k in ASSETS) {
-    expRet  += weights[k] / 100 * ASSETS[k].ret;
-    expRisk += weights[k] / 100 * ASSETS[k].risk;
-  }
-  return { weights, expRet, expRisk };
-}
-
-// ============ ОТРИСОВКА ============
-function fmtMoney(n) {
-  return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(n) + ' ₽';
-}
-
-function render(weights, expRet, expRisk, totalSum) {
-  document.getElementById('totalValue').textContent = fmtMoney(totalSum);
-
-  // Полоса распределения
-  const bar = document.getElementById('bar');
-  bar.innerHTML = '';
-  for (const k in ASSETS) {
-    const w = weights[k];
-    if (w < 0.5) continue;
-    const div = document.createElement('div');
-    div.style.width = w + '%';
-    div.style.background = ASSETS[k].color;
-    if (w >= 8) div.textContent = w.toFixed(0) + '%';
-    bar.appendChild(div);
-  }
-
-  // Список активов
-  const wrap = document.getElementById('assets');
-  wrap.innerHTML = '';
-  for (const k in ASSETS) {
-    const a = ASSETS[k];
-    const w = weights[k];
-    const amount = totalSum * w / 100;
-
-    const row = document.createElement('div');
-    row.className = 'asset-row';
-    row.innerHTML = `
-      <div class="asset-dot" style="background:${a.color}"></div>
-      <div class="asset-info">
-        <div class="asset-name">${a.name}</div>
-        <div class="asset-ticker">${a.reference}</div>
+      <div class="control-group">
+        <div class="label-row">
+          <span>Риск-профиль</span>
+          <span id="riskVal">5 из 10</span>
+        </div>
+        <input
+          type="range"
+          id="risk"
+          min="1"
+          max="10"
+          value="5"
+          aria-label="Риск-профиль"
+        >
       </div>
-      <div>
-        <div class="asset-pct">${w.toFixed(1)}%</div>
-        <div class="asset-amount">${fmtMoney(amount)}</div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Целевая доходность</span>
+          <span id="retVal">12% годовых</span>
+        </div>
+        <input
+          type="range"
+          id="ret"
+          min="4"
+          max="30"
+          value="12"
+          aria-label="Целевая доходность"
+        >
       </div>
-    `;
-    wrap.appendChild(row);
-  }
 
-  // Метрики
-  document.getElementById('expRet').textContent  = expRet.toFixed(1) + '%';
-  document.getElementById('expRisk').textContent = expRisk.toFixed(1) + '%';
-  document.getElementById('result').style.display = 'block';
-}
+      <div class="control-group">
+        <div class="label-row">
+          <span>Сумма инвестиций</span>
+          <span id="sumVal">100 000 ₽</span>
+        </div>
+        <input
+          type="range"
+          id="sum"
+          min="10000"
+          max="10000000"
+          step="10000"
+          value="100000"
+          aria-label="Сумма инвестиций"
+        >
+      </div>
 
-// ============ ГЛАВНАЯ ============
-function buildPortfolio() {
-  const { weights, expRet, expRisk } = recommendPortfolio(+riskEl.value, +retEl.value);
-  render(weights, expRet, expRisk, +sumEl.value);
-}
+      <button id="buildBtn" type="button" onclick="buildPortfolio()">
+        Подобрать портфель
+      </button>
 
-// Инициализация подписей при загрузке
-window.addEventListener('load', () => {
-  document.getElementById('riskVal').textContent = riskEl.value + ' / 10';
-  document.getElementById('retVal').textContent  = retEl.value + '% годовых';
-  document.getElementById('sumVal').textContent  =
-    new Intl.NumberFormat('ru-RU').format(sumEl.value) + ' ₽';
-});
-</script>
+      <div class="status" id="status">
+        Расчёт основан на референсных значениях российского рынка
+      </div>
+    </section>
+
+    <section class="card" id="result" style="display:none" aria-live="polite">
+      <div class="portfolio-header">
+        <div>
+          <div class="total-label">Стоимость портфеля</div>
+          <div class="total-value" id="totalValue">100 000 ₽</div>
+        </div>
+        <div class="portfolio-badge">Учебная модель</div>
+      </div>
+
+      <div class="bar" id="bar" aria-label="Структура портфеля"></div>
+
+      <div id="assets"></div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Ожидаемая доходность</div>
+          <div class="metric-value green" id="expRet">—</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Ожидаемый риск</div>
+          <div class="metric-value" id="expRisk">—</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="disclaimer">
+      <b>Не инвестиционная рекомендация.</b>
+      Это учебная модель. Значения индексов — референсные ориентиры российского рынка, а не живые котировки. Реальные доходности зависят от рыночной ситуации, комиссий, налогов и валютных курсов. Прошлые результаты не гарантируют будущих. Инвестиции связаны с риском потери капитала.
+    </footer>
+  </main>
+
+  <script>
+    const ASSETS = {
+      stocks: {
+        name: 'Акции России',
+        ticker: 'Индекс Мосбиржи · IMOEX',
+        color: '#34c759',
+        ret: 12,
+        risk: 22,
+        reference: 'Индекс Мосбиржи · IMOEX'
+      },
+      bonds: {
+        name: 'Облигации России',
+        ticker: 'Индекс гособлигаций · RGBI',
+        color: '#007aff',
+        ret: 8,
+        risk: 8,
+        reference: 'Индекс гособлигаций · RGBI'
+      },
+      gold: {
+        name: 'Золото',
+        ticker: 'Защитный актив',
+        color: '#ff9f0a',
+        ret: 10,
+        risk: 15,
+        reference: 'Защитный актив · GLDRUB_TOM'
+      },
+      cash: {
+        name: 'Валюта',
+        ticker: 'Валютная часть портфеля',
+        color: '#af52de',
+        ret: 5,
+        risk: 6,
+        reference: 'Валютная часть · USD/RUB'
+      }
+    };
+
+    const riskEl = document.getElementById('risk');
+    const retEl = document.getElementById('ret');
+    const sumEl = document.getElementById('sum');
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat('ru-RU').format(value);
+    }
+
+    function fmtMoney(value) {
+      return new Intl.NumberFormat('ru-RU', {
+        maximumFractionDigits: 0
+      }).format(value) + ' ₽';
+    }
+
+    function updateRangeFill(input) {
+      const min = Number(input.min);
+      const max = Number(input.max);
+      const value = Number(input.value);
+      const percent = ((value - min) / (max - min)) * 100;
+
+      input.style.background =
+        `linear-gradient(to right, #0071e3 0%, #0071e3 ${percent}%, #d2d2d7 ${percent}%, #d2d2d7 100%)`;
+    }
+
+    function updateLabels() {
+      document.getElementById('riskVal').textContent =
+        riskEl.value + ' из 10';
+
+      document.getElementById('retVal').textContent =
+        retEl.value + '% годовых';
+
+      document.getElementById('sumVal').textContent =
+        formatNumber(sumEl.value) + ' ₽';
+
+      updateRangeFill(riskEl);
+      updateRangeFill(retEl);
+      updateRangeFill(sumEl);
+    }
+
+    riskEl.addEventListener('input', updateLabels);
+    retEl.addEventListener('input', updateLabels);
+    sumEl.addEventListener('input', updateLabels);
+
+    function recommendPortfolio(riskLevel, targetReturn) {
+      const r = Math.min(Math.max(riskLevel, 1), 10);
+      const t = Math.min(Math.max(targetReturn, 4), 30);
+
+      let stocks = r * 8 + (t - 8) * 2;
+      let bonds = Math.max(0, 80 - r * 7);
+      let gold = Math.max(0, 18 - Math.abs(r - 5) * 3);
+      let cash = Math.max(0, 25 - r * 2);
+
+      stocks = Math.min(stocks, 80);
+      bonds = Math.min(bonds, 75);
+
+      const sum = stocks + bonds + gold + cash;
+
+      stocks = (stocks / sum) * 100;
+      bonds = (bonds / sum) * 100;
+      gold = (gold / sum) * 100;
+      cash = (cash / sum) * 100;
+
+      const weights = { stocks, bonds, gold, cash };
+
+      let expRet = 0;
+      let expRisk = 0;
+
+      for (const key in ASSETS) {
+        expRet += (weights[key] / 100) * ASSETS[key].ret;
+        expRisk += (weights[key] / 100) * ASSETS[key].risk;
+      }
+
+      return { weights, expRet, expRisk };
+    }
+
+    function render(weights, expRet, expRisk, totalSum) {
+      document.getElementById('totalValue').textContent = fmtMoney(totalSum);
+
+      const bar = document.getElementById('bar');
+      bar.innerHTML = '';
+
+      for (const key in ASSETS) {
+        const weight = weights[key];
+
+        if (weight < 0.5) continue;
+
+        const segment = document.createElement('div');
+        segment.style.width = weight + '%';
+        segment.style.background = ASSETS[key].color;
+        segment.title = `${ASSETS[key].name}: ${weight.toFixed(1)}%`;
+        bar.appendChild(segment);
+      }
+
+      const assetsWrap = document.getElementById('assets');
+      assetsWrap.innerHTML = '';
+
+      for (const key in ASSETS) {
+        const asset = ASSETS[key];
+        const weight = weights[key];
+        const amount = totalSum * weight / 100;
+
+        const row = document.createElement('div');
+        row.className = 'asset-row';
+
+        row.innerHTML = `
+          <div class="asset-dot" style="background:${asset.color}"></div>
+          <div class="asset-info">
+            <div class="asset-name">${asset.name}</div>
+            <div class="asset-ticker">${asset.reference}</div>
+          </div>
+          <div class="asset-values">
+            <div class="asset-pct">${weight.toFixed(1)}%</div>
+            <div class="asset-amount">${fmtMoney(amount)}</div>
+          </div>
+        `;
+
+        assetsWrap.appendChild(row);
+      }
+
+      document.getElementById('expRet').textContent =
+        expRet.toFixed(1) + '%';
+
+      document.getElementById('expRisk').textContent =
+        expRisk.toFixed(1) + '%';
+
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+
+      result.animate(
+        [
+          { opacity: 0, transform: 'translateY(10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 420,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+        }
+      );
+    }
+
+    function buildPortfolio() {
+      const { weights, expRet, expRisk } = recommendPortfolio(
+        Number(riskEl.value),
+        Number(retEl.value)
+      );
+
+      render(weights, expRet, expRisk, Number(sumEl.value));
+    }
+
+    window.addEventListener('load', updateLabels);
+  </script>
 </body>
 </html>
