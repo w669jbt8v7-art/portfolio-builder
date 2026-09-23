@@ -4,735 +4,2040 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f5f5f7">
-<title>Portfolio Builder</title>
+<title>MOEX Portfolio Lab</title>
+
 <style>
-:root {
-  --bg: #f5f5f7;
-  --surface: rgba(255,255,255,.82);
-  --surface-solid: #ffffff;
-  --text: #1d1d1f;
-  --secondary: #6e6e73;
-  --tertiary: #86868b;
-  --border: rgba(0,0,0,.07);
-  --green: #34c759;
-  --blue: #0071e3;
-  --gold: #ff9f0a;
-  --purple: #af52de;
-  --shadow:
-    0 2px 8px rgba(0,0,0,.03),
-    0 18px 50px rgba(0,0,0,.06);
+:root{
+  --bg:#f5f5f7;
+  --surface:rgba(255,255,255,.88);
+  --surface2:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --muted2:#86868b;
+  --border:rgba(0,0,0,.075);
+  --black:#1d1d1f;
+  --blue:#0071e3;
+  --green:#248a3d;
+  --red:#d70015;
+
+  --stocks:#34c759;
+  --ofz:#007aff;
+  --corp:#5ac8fa;
+  --money:#8e8e93;
+  --gold:#ff9f0a;
+  --yuan:#af52de;
+
+  --shadow:0 18px 60px rgba(0,0,0,.06);
 }
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
-html {
-  background: var(--bg);
+
+html{
+  scroll-behavior:smooth;
 }
-body {
-  margin: 0;
-  color: var(--text);
+
+body{
+  margin:0;
   background:
-    radial-gradient(
-      circle at 50% -10%,
-      rgba(255,255,255,1) 0%,
-      rgba(245,245,247,1) 46%
-    );
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "SF Pro Text",
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  padding:
-    max(28px, env(safe-area-inset-top))
-    20px
-    max(60px, env(safe-area-inset-bottom));
+    radial-gradient(circle at 50% -10%,#fff 0,#f5f5f7 42%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+    "SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:max(24px,env(safe-area-inset-top)) 16px
+          max(60px,env(safe-area-inset-bottom));
 }
-/* ========================================
-   PAGE
-======================================== */
-.page {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
+
+button,input,select{
+  font:inherit;
 }
-/* ========================================
-   HERO
-======================================== */
-.hero {
-  text-align: center;
-  padding: 68px 10px 54px;
+
+.page{
+  width:100%;
+  max-width:820px;
+  margin:auto;
 }
-.eyebrow {
-  color: var(--secondary);
-  font-size: 14px;
-  line-height: 1.3;
-  font-weight: 600;
-  letter-spacing: .01em;
-  margin-bottom: 12px;
+
+/* HERO */
+
+.hero{
+  text-align:center;
+  padding:68px 12px 52px;
 }
-h1 {
-  margin: 0 auto;
-  max-width: 660px;
-  font-size: clamp(42px, 8vw, 64px);
-  line-height: .98;
-  letter-spacing: -.055em;
-  font-weight: 700;
+
+.eyebrow{
+  font-size:14px;
+  font-weight:600;
+  color:var(--blue);
+  margin-bottom:14px;
 }
-.hero-copy {
-  max-width: 500px;
-  margin: 22px auto 0;
-  color: var(--secondary);
-  font-size: 18px;
-  line-height: 1.45;
-  letter-spacing: -.015em;
+
+h1{
+  margin:0;
+  font-size:clamp(46px,9vw,72px);
+  line-height:.94;
+  letter-spacing:-.06em;
+  font-weight:720;
 }
-/* ========================================
-   CARDS
-======================================== */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 30px;
-  margin-bottom: 18px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+
+.hero p{
+  max-width:590px;
+  margin:24px auto 0;
+  color:var(--muted);
+  font-size:19px;
+  line-height:1.45;
+  letter-spacing:-.02em;
 }
-.card-title {
-  font-size: 24px;
-  font-weight: 650;
-  letter-spacing: -.035em;
-  margin-bottom: 6px;
+
+/* CARDS */
+
+.card{
+  background:var(--surface);
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:30px;
+  margin-bottom:18px;
+  box-shadow:var(--shadow);
 }
-.card-description {
-  color: var(--secondary);
-  font-size: 14px;
-  margin-bottom: 32px;
+
+.section-label{
+  color:var(--blue);
+  font-size:13px;
+  font-weight:650;
+  margin-bottom:7px;
 }
-/* ========================================
-   CONTROLS
-======================================== */
-.control {
-  margin-bottom: 34px;
+
+.card h2{
+  margin:0;
+  font-size:30px;
+  letter-spacing:-.04em;
+  line-height:1.05;
 }
-.control:last-of-type {
-  margin-bottom: 0;
+
+.desc{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+  margin:9px 0 28px;
 }
-.control-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 20px;
-  margin-bottom: 15px;
+
+/* SEGMENTED */
+
+.segmented{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:#ededf0;
+  padding:4px;
+  border-radius:14px;
+  gap:3px;
 }
-.control-label {
-  color: var(--secondary);
-  font-size: 14px;
-  font-weight: 500;
+
+.segmented button{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  border-radius:11px;
+  padding:11px 8px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
 }
-.control-value {
-  font-size: 21px;
-  font-weight: 650;
-  letter-spacing: -.035em;
-  text-align: right;
+
+.segmented button.active{
+  background:white;
+  color:var(--text);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
-/* ========================================
-   RANGE
-======================================== */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 5px;
-  background: #dedee3;
-  border-radius: 999px;
-  outline: none;
-  margin: 0;
+
+/* CONTROLS */
+
+.controls{
+  margin-top:28px;
 }
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,.06);
-  background: #fff;
-  box-shadow:
-    0 1px 3px rgba(0,0,0,.12),
-    0 3px 10px rgba(0,0,0,.12);
-  cursor: pointer;
+
+.control{
+  margin:25px 0;
 }
-input[type="range"]::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  border: 1px solid rgba(0,0,0,.06);
-  border-radius: 50%;
-  background: #fff;
-  box-shadow:
-    0 1px 3px rgba(0,0,0,.12),
-    0 3px 10px rgba(0,0,0,.12);
-  cursor: pointer;
+
+.control-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:13px;
 }
-/* ========================================
-   BUTTON
-======================================== */
-button {
-  appearance: none;
-  width: 100%;
-  border: 0;
-  margin-top: 34px;
-  padding: 17px 22px;
-  border-radius: 999px;
-  background: #1d1d1f;
-  color: #fff;
-  font: inherit;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    transform .18s ease,
-    opacity .18s ease,
-    background .18s ease;
+
+.control-label{
+  color:var(--muted);
+  font-size:14px;
 }
-button:hover {
-  background: #000;
+
+.control-value{
+  font-size:19px;
+  font-weight:650;
+  letter-spacing:-.025em;
+  text-align:right;
 }
-button:active {
-  transform: scale(.985);
-  opacity: .82;
+
+input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:5px;
+  background:#d8d8dd;
+  border-radius:999px;
+  outline:none;
 }
-.status {
-  margin-top: 13px;
-  color: var(--tertiary);
-  font-size: 12px;
-  text-align: center;
+
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:25px;
+  height:25px;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 9px rgba(0,0,0,.18);
+  cursor:pointer;
 }
-/* ========================================
-   RESULT
-======================================== */
-.result-card {
-  padding: 34px 30px 26px;
+
+input[type=range]::-moz-range-thumb{
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 9px rgba(0,0,0,.18);
 }
-.total-label {
-  color: var(--secondary);
-  font-size: 14px;
-  font-weight: 500;
+
+/* SMALL GRID */
+
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:25px;
 }
-.total-value {
-  margin-top: 5px;
-  font-size: clamp(42px, 9vw, 58px);
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: -.055em;
+
+.option{
+  background:#f5f5f7;
+  border-radius:18px;
+  padding:17px;
 }
-/* ========================================
-   ALLOCATION BAR
-======================================== */
-.bar {
-  display: flex;
-  overflow: hidden;
-  height: 12px;
-  margin: 30px 0 28px;
-  background: #e8e8ed;
-  border-radius: 999px;
+
+.option label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:8px;
 }
-.bar > div {
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: transparent;
-  font-size: 0;
-  transition:
-    width .7s cubic-bezier(.22,1,.36,1);
+
+.option select{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  font-size:16px;
+  font-weight:600;
+  outline:none;
 }
-/* ========================================
-   ASSETS
-======================================== */
-.asset-row {
-  display: flex;
-  align-items: center;
-  padding: 17px 0;
-  border-bottom: 1px solid var(--border);
+
+/* BUTTON */
+
+.primary{
+  width:100%;
+  border:0;
+  border-radius:999px;
+  background:#1d1d1f;
+  color:#fff;
+  padding:17px 20px;
+  margin-top:28px;
+  font-size:16px;
+  font-weight:650;
+  cursor:pointer;
+  transition:.18s;
 }
-.asset-row:last-child {
-  border-bottom: 0;
+
+.primary:hover{
+  background:#000;
 }
-.asset-dot {
-  width: 11px;
-  height: 11px;
-  flex: 0 0 auto;
-  margin-right: 14px;
-  border-radius: 50%;
+
+.primary:active{
+  transform:scale(.985);
+  opacity:.85;
 }
-.asset-info {
-  flex: 1;
-  min-width: 0;
+
+/* RESULT */
+
+.result{
+  display:none;
 }
-.asset-name {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -.015em;
+
+.big-number{
+  font-size:clamp(44px,9vw,68px);
+  font-weight:720;
+  letter-spacing:-.06em;
+  line-height:1;
+  margin-top:8px;
 }
-.asset-ticker {
-  margin-top: 3px;
-  color: var(--tertiary);
-  font-size: 12px;
+
+.big-caption{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
 }
-.asset-right {
-  margin-left: 20px;
-  text-align: right;
+
+/* ALLOCATION */
+
+.allocation-bar{
+  height:15px;
+  display:flex;
+  overflow:hidden;
+  border-radius:999px;
+  background:#eee;
+  margin:30px 0 22px;
 }
-.asset-pct {
-  font-size: 17px;
-  font-weight: 650;
-  letter-spacing: -.02em;
+
+.allocation-bar div{
+  transition:width .65s cubic-bezier(.22,1,.36,1);
 }
-.asset-amount {
-  margin-top: 3px;
-  color: var(--tertiary);
-  font-size: 12px;
+
+.asset{
+  display:flex;
+  align-items:center;
+  padding:16px 0;
+  border-bottom:1px solid var(--border);
 }
-/* ========================================
-   METRICS
-======================================== */
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 22px;
+
+.asset:last-child{
+  border-bottom:0;
 }
-.metric {
-  padding: 20px;
-  background: #f5f5f7;
-  border-radius: 20px;
+
+.dot{
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  margin-right:14px;
+  flex-shrink:0;
 }
-.metric-label {
-  color: var(--secondary);
-  font-size: 12px;
-  font-weight: 500;
+
+.asset-main{
+  flex:1;
 }
-.metric-value {
-  margin-top: 7px;
-  font-size: 28px;
-  font-weight: 650;
-  letter-spacing: -.04em;
+
+.asset-name{
+  font-size:16px;
+  font-weight:620;
 }
-.metric-value.green {
-  color: #248a3d;
+
+.asset-code{
+  color:var(--muted2);
+  font-size:12px;
+  margin-top:3px;
 }
-/* ========================================
-   DISCLAIMER
-======================================== */
-.disclaimer {
-  max-width: 620px;
-  margin: 28px auto 0;
-  padding: 0 18px;
-  color: var(--tertiary);
-  font-size: 11px;
-  line-height: 1.55;
-  text-align: center;
+
+.asset-right{
+  text-align:right;
 }
-.disclaimer b {
-  color: var(--secondary);
-  font-weight: 600;
+
+.asset-pct{
+  font-size:17px;
+  font-weight:650;
 }
-/* ========================================
-   MOBILE
-======================================== */
-@media (max-width: 520px) {
-  body {
-    padding-left: 14px;
-    padding-right: 14px;
+
+.asset-money{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+/* METRICS */
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:11px;
+  margin-top:24px;
+}
+
+.metric{
+  background:#f5f5f7;
+  border-radius:18px;
+  padding:17px;
+}
+
+.metric-label{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.3;
+}
+
+.metric-value{
+  font-size:24px;
+  font-weight:680;
+  letter-spacing:-.04em;
+  margin-top:7px;
+}
+
+/* WHY */
+
+.reason{
+  background:#f5f5f7;
+  border-radius:18px;
+  padding:18px;
+  margin-top:12px;
+}
+
+.reason strong{
+  display:block;
+  font-size:15px;
+  margin-bottom:5px;
+}
+
+.reason span{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+/* SCENARIOS */
+
+.scenarios{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.scenario{
+  border:1px solid var(--border);
+  background:#f5f5f7;
+  border-radius:14px;
+  padding:13px 8px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+.scenario.active{
+  background:#1d1d1f;
+  color:#fff;
+}
+
+/* STRESS */
+
+.stress-main{
+  font-size:42px;
+  font-weight:720;
+  letter-spacing:-.05em;
+  margin:8px 0 4px;
+}
+
+.negative{
+  color:var(--red);
+}
+
+.positive{
+  color:var(--green);
+}
+
+.stress-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:22px;
+}
+
+.stress-item{
+  background:#f5f5f7;
+  border-radius:17px;
+  padding:16px;
+}
+
+.stress-item span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.stress-item strong{
+  display:block;
+  margin-top:5px;
+  font-size:20px;
+}
+
+/* PROJECTION */
+
+.projection{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  height:190px;
+  margin-top:26px;
+  padding-top:10px;
+  border-bottom:1px solid var(--border);
+}
+
+.proj-col{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  height:100%;
+}
+
+.proj-bar{
+  width:100%;
+  max-width:45px;
+  background:linear-gradient(180deg,#4da3ff,#0071e3);
+  border-radius:9px 9px 0 0;
+  min-height:4px;
+  transition:.6s;
+}
+
+.proj-label{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:7px;
+}
+
+/* MANUAL */
+
+.manual-row{
+  margin:22px 0;
+}
+
+.manual-top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:11px;
+}
+
+.manual-name{
+  font-size:14px;
+}
+
+.manual-val{
+  font-size:15px;
+  font-weight:650;
+}
+
+.weight-status{
+  margin-top:20px;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* FOOTER */
+
+.disclaimer{
+  max-width:680px;
+  margin:30px auto 0;
+  color:var(--muted2);
+  font-size:11px;
+  line-height:1.55;
+  text-align:center;
+  padding:0 10px;
+}
+
+.disclaimer b{
+  color:var(--muted);
+}
+
+@media(max-width:600px){
+  .hero{
+    padding:45px 8px 38px;
   }
-  .hero {
-    padding: 48px 8px 38px;
+
+  h1{
+    font-size:48px;
   }
-  h1 {
-    font-size: 44px;
+
+  .hero p{
+    font-size:17px;
   }
-  .hero-copy {
-    font-size: 17px;
+
+  .card{
+    padding:23px 19px;
+    border-radius:24px;
   }
-  .card {
-    padding: 24px 20px;
-    border-radius: 24px;
+
+  .segmented{
+    grid-template-columns:1fr 1fr;
   }
-  .result-card {
-    padding: 28px 20px 22px;
+
+  .options{
+    grid-template-columns:1fr;
   }
-  .metrics {
-    grid-template-columns: 1fr 1fr;
+
+  .metrics{
+    grid-template-columns:1fr 1fr;
   }
-  .metric {
-    padding: 16px;
-  }
-  .metric-value {
-    font-size: 24px;
+
+  .scenarios{
+    grid-template-columns:1fr 1fr;
   }
 }
 </style>
 </head>
+
 <body>
+
 <main class="page">
-  <!-- HERO -->
-  <header class="hero">
-    <div class="eyebrow">Portfolio Builder</div>
-    <h1>Соберите свой портфель.</h1>
-    <div class="hero-copy">
-      Настройте уровень риска, желаемую доходность
-      и сумму инвестиций. Модель покажет пример
-      распределения между классами активов.
-    </div>
-  </header>
-  <!-- SETTINGS -->
-  <section class="card">
-    <div class="card-title">Параметры</div>
-    <div class="card-description">
-      Настройте портфель под выбранный сценарий.
-    </div>
-    <div class="control">
-      <div class="control-head">
-        <div class="control-label">Риск-профиль</div>
-        <div class="control-value" id="riskVal">5 / 10</div>
-      </div>
-      <input
-        type="range"
-        id="risk"
-        min="1"
-        max="10"
-        value="5"
-      >
-    </div>
-    <div class="control">
-      <div class="control-head">
-        <div class="control-label">Целевая доходность</div>
-        <div class="control-value" id="retVal">12% годовых</div>
-      </div>
-      <input
-        type="range"
-        id="ret"
-        min="4"
-        max="30"
-        value="12"
-      >
-    </div>
-    <div class="control">
-      <div class="control-head">
-        <div class="control-label">Сумма инвестиций</div>
-        <div class="control-value" id="sumVal">100 000 ₽</div>
-      </div>
-      <input
-        type="range"
-        id="sum"
-        min="10000"
-        max="10000000"
-        step="10000"
-        value="100000"
-      >
-    </div>
-    <button id="buildBtn" onclick="buildPortfolio()">
-      Создать портфель
-    </button>
-    <div class="status">
-      Учебная модель российского рынка
-    </div>
-  </section>
-  <!-- RESULT -->
-  <section
-    class="card result-card"
-    id="result"
-    style="display:none"
-  >
-    <div class="total-label">
-      Стоимость портфеля
-    </div>
-    <div class="total-value" id="totalValue">
-      100 000 ₽
-    </div>
-    <div class="bar" id="bar"></div>
-    <div id="assets"></div>
-    <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">
-          Ожидаемая доходность
-        </div>
-        <div
-          class="metric-value green"
-          id="expRet"
-        >
-          —
-        </div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">
-          Ожидаемый риск
-        </div>
-        <div
-          class="metric-value"
-          id="expRisk"
-        >
-          —
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- DISCLAIMER -->
-  <div class="disclaimer">
-    <b>Не является инвестиционной рекомендацией.</b>
-    Модель предназначена исключительно для учебных целей.
-    Значения индексов используются как ориентиры и не являются
-    актуальными биржевыми котировками. Инвестиции связаны
-    с риском потери капитала.
+
+<header class="hero">
+  <div class="eyebrow">MOEX Portfolio Lab</div>
+  <h1>Ваш инвестиционный план.</h1>
+  <p>
+    Соберите модель портфеля российского рынка,
+    проверьте его в разных сценариях и посмотрите,
+    как может меняться капитал со временем.
+  </p>
+</header>
+
+
+<!-- PARAMETERS -->
+
+<section class="card">
+
+  <div class="section-label">01 · Стратегия</div>
+  <h2>Как вы хотите инвестировать?</h2>
+
+  <div class="desc">
+    Выберите базовый стиль. Все параметры ниже можно изменить вручную.
   </div>
+
+  <div class="segmented" id="strategyButtons">
+    <button data-strategy="safe">Сохранение</button>
+    <button data-strategy="balanced" class="active">Баланс</button>
+    <button data-strategy="growth">Рост</button>
+    <button data-strategy="aggressive">Агрессивно</button>
+  </div>
+
+
+  <div class="controls">
+
+    <div class="control">
+      <div class="control-head">
+        <div class="control-label">Начальный капитал</div>
+        <div class="control-value" id="capitalValue"></div>
+      </div>
+      <input id="capital" type="range"
+        min="50000" max="10000000"
+        step="50000" value="500000">
+    </div>
+
+
+    <div class="control">
+      <div class="control-head">
+        <div class="control-label">Пополнение в месяц</div>
+        <div class="control-value" id="monthlyValue"></div>
+      </div>
+      <input id="monthly" type="range"
+        min="0" max="500000"
+        step="5000" value="30000">
+    </div>
+
+
+    <div class="control">
+      <div class="control-head">
+        <div class="control-label">Горизонт</div>
+        <div class="control-value">
+          <span id="yearsValue"></span> лет
+        </div>
+      </div>
+      <input id="years" type="range"
+        min="1" max="20" value="5">
+    </div>
+
+
+    <div class="control">
+      <div class="control-head">
+        <div class="control-label">Допустимая просадка</div>
+        <div class="control-value">
+          −<span id="drawdownValue"></span>%
+        </div>
+      </div>
+      <input id="drawdown" type="range"
+        min="5" max="50" step="5" value="20">
+    </div>
+
+
+    <div class="control">
+      <div class="control-head">
+        <div class="control-label">Ликвидный резерв</div>
+        <div class="control-value">
+          <span id="liquidityValue"></span>%
+        </div>
+      </div>
+      <input id="liquidity" type="range"
+        min="0" max="40" step="5" value="10">
+    </div>
+
+  </div>
+
+
+  <div class="options">
+
+    <div class="option">
+      <label>Акционная часть</label>
+      <select id="equityStyle">
+        <option value="market">Широкий рынок</option>
+        <option value="bluechips">Голубые фишки</option>
+        <option value="dividend">Дивидендный уклон</option>
+      </select>
+    </div>
+
+    <div class="option">
+      <label>Реинвестирование</label>
+      <select id="reinvest">
+        <option value="yes">Да</option>
+        <option value="no">Нет</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button class="primary" onclick="buildPortfolio()">
+    Рассчитать портфель
+  </button>
+
+</section>
+
+
+<!-- RESULT -->
+
+<section class="card result" id="result">
+
+  <div class="section-label">02 · Портфель</div>
+  <h2>Модель распределения</h2>
+
+  <div class="big-number" id="portfolioTotal"></div>
+  <div class="big-caption">начальный капитал</div>
+
+  <div class="allocation-bar" id="allocationBar"></div>
+
+  <div id="assetList"></div>
+
+  <div class="metrics">
+
+    <div class="metric">
+      <div class="metric-label">Модельная доходность</div>
+      <div class="metric-value" id="expectedReturn"></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Модельная волатильность</div>
+      <div class="metric-value" id="expectedRisk"></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Горизонт</div>
+      <div class="metric-value" id="metricYears"></div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- WHY -->
+
+<section class="card result">
+
+  <div class="section-label">03 · Логика</div>
+  <h2>Почему такой портфель?</h2>
+
+  <div class="desc">
+    Объяснение меняется вместе с вашими параметрами.
+  </div>
+
+  <div id="reasons"></div>
+
+</section>
+
+
+<!-- SCENARIO -->
+
+<section class="card result">
+
+  <div class="section-label">04 · Сценарии</div>
+  <h2>А если рынок изменится?</h2>
+
+  <div class="desc">
+    Это не прогноз, а модель чувствительности классов активов.
+  </div>
+
+  <div class="scenarios">
+    <button class="scenario active"
+      data-scenario="base">Базовый</button>
+
+    <button class="scenario"
+      data-scenario="rates">Снижение ставок</button>
+
+    <button class="scenario"
+      data-scenario="ruble">Слабый рубль</button>
+
+    <button class="scenario"
+      data-scenario="stress">Стресс</button>
+  </div>
+
+  <div style="margin-top:28px">
+    <div class="control-label">Модельный результат портфеля</div>
+    <div class="stress-main" id="scenarioResult"></div>
+    <div class="big-caption" id="scenarioText"></div>
+  </div>
+
+</section>
+
+
+<!-- STRESS TEST -->
+
+<section class="card result">
+
+  <div class="section-label">05 · Stress test</div>
+  <h2>Что если акции упадут?</h2>
+
+  <div class="desc">
+    Измените размер падения рынка и посмотрите условный эффект
+    на весь портфель.
+  </div>
+
+  <div class="control">
+    <div class="control-head">
+      <div class="control-label">Падение акций РФ</div>
+      <div class="control-value">
+        −<span id="crashValue">20</span>%
+      </div>
+    </div>
+
+    <input id="crash" type="range"
+      min="5" max="50" step="5" value="20">
+  </div>
+
+  <div class="stress-main negative" id="stressTotal"></div>
+
+  <div class="big-caption">
+    модельное изменение всего портфеля
+  </div>
+
+  <div class="stress-grid" id="stressGrid"></div>
+
+</section>
+
+
+<!-- PROJECTION -->
+
+<section class="card result">
+
+  <div class="section-label">06 · Капитал</div>
+  <h2>Как может расти капитал?</h2>
+
+  <div class="desc">
+    Математическая иллюстрация на основе модельной средней
+    доходности. Не прогноз будущего результата.
+  </div>
+
+  <div class="big-number" id="futureValue"></div>
+  <div class="big-caption" id="futureCaption"></div>
+
+  <div class="projection" id="projection"></div>
+
+</section>
+
+
+<!-- MANUAL -->
+
+<section class="card result">
+
+  <div class="section-label">07 · Ручной режим</div>
+  <h2>Настройте веса сами.</h2>
+
+  <div class="desc">
+    Сумма долей должна составлять 100%.
+  </div>
+
+  <div id="manualControls"></div>
+
+  <div class="weight-status" id="weightStatus"></div>
+
+  <button class="primary" onclick="applyManual()">
+    Применить распределение
+  </button>
+
+</section>
+
+
+<div class="disclaimer">
+  <b>Не является индивидуальной инвестиционной рекомендацией.</b>
+  MOEX Portfolio Lab — учебная модель. Показатели доходности,
+  риска, стресс-тестов и будущей стоимости являются математическими
+  предположениями, а не прогнозами. Приложение не использует
+  текущие биржевые котировки. Реальный результат зависит от цен
+  активов, ставок, комиссий, налогов, ликвидности и других факторов.
+</div>
+
 </main>
+
+
 <script>
-/* ========================================
-   ASSETS
-======================================== */
+
+/* ============================
+   ASSET MODEL
+============================ */
+
 const ASSETS = {
-  stocks: {
-    name: 'Акции РФ',
-    ticker: 'IMOEX',
-    color: '#34c759',
-    ret: 12,
-    risk: 22,
-    reference: 'IMOEX ≈ 2750'
+
+  stocks:{
+    name:"Акции РФ",
+    code:"IMOEX / MOEXBMI",
+    color:"#34c759",
+    ret:13,
+    risk:24
   },
-  bonds: {
-    name: 'Облигации РФ',
-    ticker: 'RGBI',
-    color: '#0071e3',
-    ret: 8,
-    risk: 8,
-    reference: 'RGBI ≈ 108'
+
+  ofz:{
+    name:"ОФЗ",
+    code:"Государственные облигации",
+    color:"#007aff",
+    ret:10,
+    risk:7
   },
-  gold: {
-    name: 'Золото',
-    ticker: 'GLDRUB_TOM',
-    color: '#ff9f0a',
-    ret: 10,
-    risk: 15,
-    reference: 'Золото ≈ 7500 ₽/г'
+
+  corp:{
+    name:"Корпоративные облигации",
+    code:"Облигации российских эмитентов",
+    color:"#5ac8fa",
+    ret:11,
+    risk:10
   },
-  cash: {
-    name: 'Валюта',
-    ticker: 'USD/RUB',
-    color: '#af52de',
-    ret: 5,
-    risk: 6,
-    reference: 'USD/RUB ≈ 92'
+
+  money:{
+    name:"Денежный рынок",
+    code:"Краткосрочная ликвидность",
+    color:"#8e8e93",
+    ret:8,
+    risk:2
+  },
+
+  gold:{
+    name:"Золото",
+    code:"GLDRUB_TOM",
+    color:"#ff9f0a",
+    ret:9,
+    risk:16
+  },
+
+  yuan:{
+    name:"Юань",
+    code:"CNY/RUB",
+    color:"#af52de",
+    ret:5,
+    risk:10
   }
+
 };
-/* ========================================
-   UI
-======================================== */
-const riskEl = document.getElementById('risk');
-const retEl  = document.getElementById('ret');
-const sumEl  = document.getElementById('sum');
-riskEl.oninput = () => {
-  document.getElementById('riskVal').textContent =
-    riskEl.value + ' / 10';
-};
-retEl.oninput = () => {
-  document.getElementById('retVal').textContent =
-    retEl.value + '% годовых';
-};
-sumEl.oninput = () => {
-  document.getElementById('sumVal').textContent =
-    new Intl.NumberFormat('ru-RU')
-      .format(sumEl.value) + ' ₽';
-};
-/* ========================================
-   PORTFOLIO LOGIC
-======================================== */
-function recommendPortfolio(riskLevel, targetReturn) {
-  const r =
-    Math.min(Math.max(riskLevel, 1), 10);
-  const t =
-    Math.min(Math.max(targetReturn, 4), 30);
-  let stocks =
-    r * 8 + (t - 8) * 2;
-  let bonds =
-    Math.max(0, 80 - r * 7);
-  let gold =
-    Math.max(0, 18 - Math.abs(r - 5) * 3);
-  let cash =
-    Math.max(0, 25 - r * 2);
-  stocks = Math.min(stocks, 80);
-  bonds  = Math.min(bonds, 75);
-  const sum =
-    stocks + bonds + gold + cash;
-  stocks = stocks / sum * 100;
-  bonds  = bonds  / sum * 100;
-  gold   = gold   / sum * 100;
-  cash   = cash   / sum * 100;
-  const weights = {
-    stocks,
-    bonds,
-    gold,
-    cash
-  };
-  let expRet = 0;
-  let expRisk = 0;
-  for (const k in ASSETS) {
-    expRet +=
-      weights[k] / 100 *
-      ASSETS[k].ret;
-    expRisk +=
-      weights[k] / 100 *
-      ASSETS[k].risk;
+
+
+const STRATEGIES = {
+
+  safe:{
+    stocks:10,
+    ofz:40,
+    corp:15,
+    money:20,
+    gold:10,
+    yuan:5
+  },
+
+  balanced:{
+    stocks:35,
+    ofz:25,
+    corp:15,
+    money:10,
+    gold:10,
+    yuan:5
+  },
+
+  growth:{
+    stocks:55,
+    ofz:15,
+    corp:10,
+    money:5,
+    gold:10,
+    yuan:5
+  },
+
+  aggressive:{
+    stocks:75,
+    ofz:5,
+    corp:5,
+    money:0,
+    gold:10,
+    yuan:5
   }
-  return {
-    weights,
-    expRet,
-    expRisk
-  };
-}
-/* ========================================
-   FORMAT
-======================================== */
-function fmtMoney(n) {
+
+};
+
+
+const SCENARIOS = {
+
+  base:{
+    stocks:13,
+    ofz:10,
+    corp:11,
+    money:8,
+    gold:9,
+    yuan:5,
+    text:"Базовые модельные предположения."
+  },
+
+  rates:{
+    stocks:15,
+    ofz:17,
+    corp:14,
+    money:6,
+    gold:8,
+    yuan:3,
+    text:"Снижение ставок условно поддерживает длинные облигации и риск-активы."
+  },
+
+  ruble:{
+    stocks:12,
+    ofz:7,
+    corp:8,
+    money:7,
+    gold:22,
+    yuan:20,
+    text:"Ослабление рубля повышает рублёвую стоимость валютных и золотых активов."
+  },
+
+  stress:{
+    stocks:-25,
+    ofz:3,
+    corp:-5,
+    money:7,
+    gold:15,
+    yuan:12,
+    text:"Условный стресс: падение акций и корпоративного риска при защитной роли части активов."
+  }
+
+};
+
+
+let currentStrategy = "balanced";
+let currentScenario = "base";
+let currentWeights = {...STRATEGIES.balanced};
+
+
+/* ============================
+   DOM
+============================ */
+
+const capital = document.getElementById("capital");
+const monthly = document.getElementById("monthly");
+const years = document.getElementById("years");
+const drawdown = document.getElementById("drawdown");
+const liquidity = document.getElementById("liquidity");
+const crash = document.getElementById("crash");
+
+
+function money(n){
+
   return new Intl.NumberFormat(
-    'ru-RU',
-    {
-      maximumFractionDigits: 0
-    }
-  ).format(n) + ' ₽';
+    "ru-RU",
+    {maximumFractionDigits:0}
+  ).format(n)+" ₽";
+
 }
-/* ========================================
-   RENDER
-======================================== */
-function render(
-  weights,
-  expRet,
-  expRisk,
-  totalSum
-) {
-  document
-    .getElementById('totalValue')
-    .textContent =
-      fmtMoney(totalSum);
-  /* Allocation bar */
-  const bar =
-    document.getElementById('bar');
-  bar.innerHTML = '';
-  for (const k in ASSETS) {
-    const w = weights[k];
-    if (w < 0.5) continue;
-    const div =
-      document.createElement('div');
-    div.style.width =
-      w + '%';
-    div.style.background =
-      ASSETS[k].color;
-    bar.appendChild(div);
+
+
+function updateLabels(){
+
+  capitalValue.textContent =
+    money(+capital.value);
+
+  monthlyValue.textContent =
+    money(+monthly.value);
+
+  yearsValue.textContent =
+    years.value;
+
+  drawdownValue.textContent =
+    drawdown.value;
+
+  liquidityValue.textContent =
+    liquidity.value;
+
+  crashValue.textContent =
+    crash.value;
+
+}
+
+
+[
+  capital,
+  monthly,
+  years,
+  drawdown,
+  liquidity
+].forEach(el=>{
+
+  el.addEventListener("input",updateLabels);
+
+});
+
+
+crash.addEventListener("input",()=>{
+
+  updateLabels();
+
+  if(
+    document.getElementById("result")
+      .style.display !== "none"
+  ){
+    renderStress();
   }
-  /* Assets */
-  const wrap =
-    document.getElementById('assets');
-  wrap.innerHTML = '';
-  for (const k in ASSETS) {
+
+});
+
+
+/* ============================
+   STRATEGY
+============================ */
+
+document
+.querySelectorAll("#strategyButtons button")
+.forEach(btn=>{
+
+  btn.onclick=()=>{
+
+    document
+      .querySelectorAll("#strategyButtons button")
+      .forEach(x=>x.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    currentStrategy =
+      btn.dataset.strategy;
+
+
+    /* Adjust risk controls */
+
+    const settings = {
+
+      safe:{
+        dd:10,
+        liq:20
+      },
+
+      balanced:{
+        dd:20,
+        liq:10
+      },
+
+      growth:{
+        dd:30,
+        liq:5
+      },
+
+      aggressive:{
+        dd:45,
+        liq:0
+      }
+
+    };
+
+
+    drawdown.value =
+      settings[currentStrategy].dd;
+
+    liquidity.value =
+      settings[currentStrategy].liq;
+
+    updateLabels();
+
+  };
+
+});
+
+
+/* ============================
+   BUILD MODEL
+============================ */
+
+function buildPortfolio(){
+
+  let w = {
+    ...STRATEGIES[currentStrategy]
+  };
+
+
+  const dd =
+    +drawdown.value;
+
+  const reserve =
+    +liquidity.value;
+
+
+  /*
+    Risk tolerance adjustment
+  */
+
+  if(dd <= 10){
+
+    const move =
+      Math.min(w.stocks,15);
+
+    w.stocks -= move;
+
+    w.ofz += move * .6;
+    w.money += move * .4;
+
+  }
+
+  else if(dd >= 35){
+
+    const move =
+      Math.min(w.ofz,10);
+
+    w.ofz -= move;
+    w.stocks += move;
+
+  }
+
+
+  /*
+    Liquidity requirement
+  */
+
+  if(w.money < reserve){
+
+    const needed =
+      reserve - w.money;
+
+    w.money =
+      reserve;
+
+    let removable =
+      w.stocks +
+      w.ofz +
+      w.corp;
+
+    if(removable > 0){
+
+      const factor =
+        needed / removable;
+
+      w.stocks -=
+        w.stocks * factor;
+
+      w.ofz -=
+        w.ofz * factor;
+
+      w.corp -=
+        w.corp * factor;
+
+    }
+
+  }
+
+
+  normalize(w);
+
+  currentWeights = w;
+
+  showResults();
+
+}
+
+
+/* ============================
+   NORMALIZE
+============================ */
+
+function normalize(w){
+
+  const total =
+    Object.values(w)
+      .reduce((a,b)=>a+b,0);
+
+  for(const k in w){
+
+    w[k] =
+      w[k] / total * 100;
+
+  }
+
+}
+
+
+/* ============================
+   METRICS
+============================ */
+
+function portfolioMetrics(){
+
+  let ret=0;
+  let risk=0;
+
+  for(const k in currentWeights){
+
+    const weight =
+      currentWeights[k]/100;
+
+    ret +=
+      weight * ASSETS[k].ret;
+
+    risk +=
+      weight * ASSETS[k].risk;
+
+  }
+
+  /*
+    Simple diversification adjustment.
+    Still explicitly model-based.
+  */
+
+  risk *= .82;
+
+  return {ret,risk};
+
+}
+
+
+/* ============================
+   RESULTS
+============================ */
+
+function showResults(){
+
+  document
+    .querySelectorAll(".result")
+    .forEach(x=>x.style.display="block");
+
+
+  renderPortfolio();
+  renderReasons();
+  renderScenario();
+  renderStress();
+  renderProjection();
+  renderManual();
+
+
+  document
+    .getElementById("result")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+}
+
+
+/* ============================
+   PORTFOLIO
+============================ */
+
+function renderPortfolio(){
+
+  portfolioTotal.textContent =
+    money(+capital.value);
+
+
+  allocationBar.innerHTML="";
+  assetList.innerHTML="";
+
+
+  for(const k in currentWeights){
+
+    const w =
+      currentWeights[k];
+
     const a =
       ASSETS[k];
-    const w =
-      weights[k];
-    const amount =
-      totalSum * w / 100;
+
+
+    const bar =
+      document.createElement("div");
+
+    bar.style.width =
+      w+"%";
+
+    bar.style.background =
+      a.color;
+
+    allocationBar.appendChild(bar);
+
+
     const row =
-      document.createElement('div');
+      document.createElement("div");
+
     row.className =
-      'asset-row';
-    row.innerHTML = `
+      "asset";
+
+
+    row.innerHTML=`
+
       <div
-        class="asset-dot"
+        class="dot"
         style="background:${a.color}"
       ></div>
-      <div class="asset-info">
+
+      <div class="asset-main">
+
         <div class="asset-name">
           ${a.name}
         </div>
-        <div class="asset-ticker">
-          ${a.reference}
+
+        <div class="asset-code">
+          ${a.code}
         </div>
+
       </div>
+
       <div class="asset-right">
+
         <div class="asset-pct">
           ${w.toFixed(1)}%
         </div>
-        <div class="asset-amount">
-          ${fmtMoney(amount)}
+
+        <div class="asset-money">
+          ${money(+capital.value*w/100)}
         </div>
+
       </div>
+
     `;
-    wrap.appendChild(row);
+
+
+    assetList.appendChild(row);
+
   }
-  /* Metrics */
-  document
-    .getElementById('expRet')
-    .textContent =
-      expRet.toFixed(1) + '%';
-  document
-    .getElementById('expRisk')
-    .textContent =
-      expRisk.toFixed(1) + '%';
-  const result =
-    document.getElementById('result');
-  result.style.display =
-    'block';
-  requestAnimationFrame(() => {
-    result.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest'
-    });
+
+
+  const m =
+    portfolioMetrics();
+
+
+  expectedReturn.textContent =
+    m.ret.toFixed(1)+"%";
+
+  expectedRisk.textContent =
+    m.risk.toFixed(1)+"%";
+
+  metricYears.textContent =
+    years.value+" лет";
+
+}
+
+
+/* ============================
+   REASONS
+============================ */
+
+function renderReasons(){
+
+  const reasons=[];
+
+  const w=currentWeights;
+
+
+  if(w.stocks>=50){
+
+    reasons.push([
+      "Высокая доля акций",
+      "Горизонт и допустимая просадка позволяют модели выделить большую долю портфеля российскому рынку акций."
+    ]);
+
+  }else{
+
+    reasons.push([
+      "Контроль акционного риска",
+      "Доля акций ограничена, чтобы уменьшить чувствительность портфеля к сильным движениям фондового рынка."
+    ]);
+
+  }
+
+
+  if(w.ofz+w.corp>=35){
+
+    reasons.push([
+      "Значимая доля облигаций",
+      "ОФЗ и корпоративные облигации используются моделью как более умеренная часть портфеля."
+    ]);
+
+  }
+
+
+  if(w.money>=10){
+
+    reasons.push([
+      "Резерв ликвидности",
+      `${w.money.toFixed(0)}% портфеля находится в модели денежного рынка для снижения общей волатильности и сохранения ликвидности.`
+    ]);
+
+  }
+
+
+  if(w.gold>=8){
+
+    reasons.push([
+      "Золото",
+      "Золото добавлено как отдельный источник риска, который может вести себя иначе, чем акции и рублёвые облигации."
+    ]);
+
+  }
+
+
+  if(w.yuan>0){
+
+    reasons.push([
+      "Валютная составляющая",
+      "Небольшая доля юаня добавляет чувствительность к изменению курса рубля."
+    ]);
+
+  }
+
+
+  reasonsEl =
+    document.getElementById("reasons");
+
+  reasonsEl.innerHTML="";
+
+
+  reasons.forEach(r=>{
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "reason";
+
+    div.innerHTML=`
+      <strong>${r[0]}</strong>
+      <span>${r[1]}</span>
+    `;
+
+    reasonsEl.appendChild(div);
+
   });
+
 }
-/* ========================================
-   BUILD
-======================================== */
-function buildPortfolio() {
-  const {
-    weights,
-    expRet,
-    expRisk
-  } = recommendPortfolio(
-    +riskEl.value,
-    +retEl.value
-  );
-  render(
-    weights,
-    expRet,
-    expRisk,
-    +sumEl.value
-  );
-}
-/* ========================================
-   INIT
-======================================== */
-window.addEventListener(
-  'load',
-  () => {
+
+
+/* ============================
+   SCENARIOS
+============================ */
+
+document
+.querySelectorAll(".scenario")
+.forEach(btn=>{
+
+  btn.onclick=()=>{
+
     document
-      .getElementById('riskVal')
-      .textContent =
-        riskEl.value + ' / 10';
-    document
-      .getElementById('retVal')
-      .textContent =
-        retEl.value + '% годовых';
-    document
-      .getElementById('sumVal')
-      .textContent =
-        new Intl.NumberFormat('ru-RU')
-          .format(sumEl.value) + ' ₽';
+      .querySelectorAll(".scenario")
+      .forEach(x=>x.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    currentScenario =
+      btn.dataset.scenario;
+
+    renderScenario();
+
+  };
+
+});
+
+
+function renderScenario(){
+
+  const scenario =
+    SCENARIOS[currentScenario];
+
+  let result=0;
+
+
+  for(const k in currentWeights){
+
+    result +=
+      currentWeights[k]/100 *
+      scenario[k];
+
   }
-);
+
+
+  scenarioResult.textContent =
+    (result>=0?"+":"")+
+    result.toFixed(1)+"%";
+
+
+  scenarioResult.className =
+    "stress-main "+
+    (result>=0
+      ? "positive"
+      : "negative");
+
+
+  scenarioText.textContent =
+    scenario.text;
+
+}
+
+
+/* ============================
+   STRESS TEST
+============================ */
+
+function renderStress(){
+
+  const fall =
+    +crash.value;
+
+
+  /*
+    Conditional stress assumptions.
+  */
+
+  const moves={
+
+    stocks:-fall,
+
+    ofz:
+      fall>=30
+        ? 3
+        : 1,
+
+    corp:
+      -fall*.18,
+
+    money:1,
+
+    gold:
+      fall*.35,
+
+    yuan:
+      fall*.25
+
+  };
+
+
+  let total=0;
+
+
+  for(const k in currentWeights){
+
+    total +=
+      currentWeights[k]/100 *
+      moves[k];
+
+  }
+
+
+  stressTotal.textContent =
+    (total>=0?"+":"")+
+    total.toFixed(1)+"%";
+
+
+  stressTotal.className =
+    "stress-main "+
+    (total>=0
+      ? "positive"
+      : "negative");
+
+
+  stressGrid.innerHTML="";
+
+
+  for(const k in moves){
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "stress-item";
+
+
+    const n =
+      moves[k];
+
+
+    div.innerHTML=`
+
+      <span>
+        ${ASSETS[k].name}
+      </span>
+
+      <strong class="${
+        n>=0
+          ? "positive"
+          : "negative"
+      }">
+
+        ${n>=0?"+":""}${n.toFixed(1)}%
+
+      </strong>
+
+    `;
+
+
+    stressGrid.appendChild(div);
+
+  }
+
+}
+
+
+/* ============================
+   PROJECTION
+============================ */
+
+function renderProjection(){
+
+  const m =
+    portfolioMetrics();
+
+  const start =
+    +capital.value;
+
+  const add =
+    +monthly.value;
+
+  const y =
+    +years.value;
+
+
+  /*
+    If reinvestment disabled,
+    use lower effective compound return.
+  */
+
+  const reinvest =
+    document.getElementById("reinvest")
+      .value==="yes";
+
+
+  const annualRate =
+    reinvest
+      ? m.ret/100
+      : m.ret/100*.72;
+
+
+  const monthlyRate =
+    Math.pow(1+annualRate,1/12)-1;
+
+
+  let value =
+    start;
+
+
+  const points=[
+    value
+  ];
+
+
+  for(let year=1;year<=y;year++){
+
+    for(let month=0;month<12;month++){
+
+      value =
+        value*(1+monthlyRate)+add;
+
+    }
+
+    points.push(value);
+
+  }
+
+
+  futureValue.textContent =
+    money(value);
+
+
+  const contributed =
+    start + add*12*y;
+
+
+  const growth =
+    value-contributed;
+
+
+  futureCaption.textContent =
+    `Внесено ${money(contributed)} · модельный прирост ${money(growth)}`;
+
+
+  projection.innerHTML="";
+
+
+  const max =
+    Math.max(...points);
+
+
+  points.forEach((p,i)=>{
+
+    const col =
+      document.createElement("div");
+
+    col.className =
+      "proj-col";
+
+
+    const bar =
+      document.createElement("div");
+
+    bar.className =
+      "proj-bar";
+
+    bar.style.height =
+      Math.max(
+        5,
+        p/max*150
+      )+"px";
+
+
+    const label =
+      document.createElement("div");
+
+    label.className =
+      "proj-label";
+
+    label.textContent =
+      i===0
+        ? "Сейчас"
+        : i+"г";
+
+
+    col.appendChild(bar);
+    col.appendChild(label);
+
+    projection.appendChild(col);
+
+  });
+
+}
+
+
+/* ============================
+   MANUAL MODE
+============================ */
+
+function renderManual(){
+
+  manualControls.innerHTML="";
+
+
+  for(const k in currentWeights){
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "manual-row";
+
+
+    row.innerHTML=`
+
+      <div class="manual-top">
+
+        <div class="manual-name">
+          ${ASSETS[k].name}
+        </div>
+
+        <div
+          class="manual-val"
+          id="manualVal-${k}"
+        >
+          ${currentWeights[k].toFixed(0)}%
+        </div>
+
+      </div>
+
+      <input
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        value="${currentWeights[k]}"
+        data-asset="${k}"
+        class="manual-slider"
+      >
+
+    `;
+
+
+    manualControls.appendChild(row);
+
+  }
+
+
+  document
+    .querySelectorAll(".manual-slider")
+    .forEach(slider=>{
+
+      slider.oninput=()=>{
+
+        document
+          .getElementById(
+            "manualVal-"+slider.dataset.asset
+          )
+          .textContent =
+            slider.value+"%";
+
+        updateWeightStatus();
+
+      };
+
+    });
+
+
+  updateWeightStatus();
+
+}
+
+
+function manualTotal(){
+
+  let total=0;
+
+  document
+    .querySelectorAll(".manual-slider")
+    .forEach(x=>{
+
+      total +=
+        +x.value;
+
+    });
+
+  return total;
+
+}
+
+
+function updateWeightStatus(){
+
+  const total =
+    manualTotal();
+
+  weightStatus.textContent =
+    "Сумма: "+
+    total.toFixed(0)+
+    "%";
+
+
+  weightStatus.style.color =
+    Math.abs(total-100)<.1
+      ? "var(--green)"
+      : "var(--red)";
+
+}
+
+
+function applyManual(){
+
+  const total =
+    manualTotal();
+
+
+  if(Math.abs(total-100)>.1){
+
+    weightStatus.textContent =
+      "Сумма должна быть равна 100%";
+
+    return;
+
+  }
+
+
+  const w={};
+
+
+  document
+    .querySelectorAll(".manual-slider")
+    .forEach(x=>{
+
+      w[x.dataset.asset] =
+        +x.value;
+
+    });
+
+
+  currentWeights=w;
+
+
+  renderPortfolio();
+  renderReasons();
+  renderScenario();
+  renderStress();
+  renderProjection();
+
+
+  document
+    .getElementById("result")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
+
+}
+
+
+/* ============================
+   LIVE UPDATES
+============================ */
+
+years.addEventListener("change",()=>{
+
+  if(result.style.display==="block"){
+    renderProjection();
+    renderPortfolio();
+  }
+
+});
+
+
+monthly.addEventListener("change",()=>{
+
+  if(result.style.display==="block"){
+    renderProjection();
+  }
+
+});
+
+
+capital.addEventListener("change",()=>{
+
+  if(result.style.display==="block"){
+    renderPortfolio();
+    renderProjection();
+  }
+
+});
+
+
+document
+.getElementById("reinvest")
+.addEventListener("change",()=>{
+
+  if(result.style.display==="block"){
+    renderProjection();
+  }
+
+});
+
+
+/* ============================
+   INIT
+============================ */
+
+updateLabels();
+
 </script>
+
 </body>
 </html>
