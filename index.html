@@ -13,7 +13,6 @@
     --text: #ffffff;
     --muted: #8e8e93;
     --green: #00c805;
-    --green-dim: #00a004;
     --red: #ff5000;
     --border: #1f1f23;
     --gold: #ffb800;
@@ -82,21 +81,12 @@
     transition: opacity 0.15s, transform 0.1s;
   }
   button:active { opacity: 0.85; transform: scale(0.98); }
-  button:disabled { background: var(--card2); color: var(--muted); cursor: wait; }
 
   .status {
     font-size: 12px; color: var(--muted);
     margin-top: 12px; text-align: center;
   }
-  .status.live::before {
-    content: ''; display: inline-block;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green); margin-right: 6px;
-    animation: pulse 1.5s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* Портфель */
   .total-value {
     font-size: 44px; font-weight: 800; letter-spacing: -1.5px;
     margin: 4px 0 6px;
@@ -132,7 +122,6 @@
   .asset-pct { font-size: 17px; font-weight: 700; text-align: right; }
   .asset-amount { font-size: 12px; color: var(--muted); text-align: right; margin-top: 2px; }
 
-  /* Метрики */
   .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
   .metric {
     background: var(--card2); border-radius: 12px; padding: 14px;
@@ -148,21 +137,12 @@
     border-radius: 14px; margin-top: 20px;
     border: 1px solid var(--border);
   }
-
-  .error {
-    background: rgba(255,80,0,0.1);
-    border: 1px solid rgba(255,80,0,0.3);
-    color: var(--red);
-    padding: 12px; border-radius: 12px;
-    font-size: 13px; margin-top: 12px;
-    display: none;
-  }
 </style>
 </head>
 <body>
 
 <h1>Подбор портфеля</h1>
-<div class="sub">Российский рынок · MOEX · учебный инструмент</div>
+<div class="sub">Российский рынок · учебный инструмент</div>
 
 <div class="card">
   <div class="label-row">
@@ -184,8 +164,7 @@
   <input type="range" id="sum" min="10000" max="10000000" step="10000" value="100000">
 
   <button id="buildBtn" onclick="buildPortfolio()">Подобрать портфель</button>
-  <div class="status" id="status">Данные MOEX будут загружены при подборе</div>
-  <div class="error" id="error"></div>
+  <div class="status" id="status">Референсные значения российского рынка</div>
 </div>
 
 <div class="card" id="result" style="display:none">
@@ -208,16 +187,40 @@
 </div>
 
 <div class="disclaimer">
-  <b>Не инвестиционная рекомендация.</b> Это учебная модель на основе публичных данных MOEX. Реальные доходности зависят от рыночной ситуации, комиссий, налогов и валютных курсов. Прошлые результаты не гарантируют будущих. Инвестиции связаны с риском потери капитала. Перед принятием решений консультируйтесь с лицензированным советником.
+  <b>Не инвестиционная рекомендация.</b> Это учебная модель. Значения индексов — референсные ориентиры российского рынка, а не живые котировки. Реальные доходности зависят от рыночной ситуации, комиссий, налогов и валютных курсов. Прошлые результаты не гарантируют будущих. Инвестиции связаны с риском потери капитала. Перед принятием решений консультируйтесь с лицензированным советником.
 </div>
 
 <script>
-// ============ КЛАССЫ АКТИВОВ ============
+// ============ КЛАССЫ АКТИВОВ (российский рынок) ============
 const ASSETS = {
-  stocks: { name: 'Акции РФ',     ticker: 'IMOEX',      color: '#00c805', ret: 12, risk: 22 },
-  bonds:  { name: 'Облигации РФ', ticker: 'RGBI',       color: '#4a9eff', ret: 8,  risk: 8  },
-  gold:   { name: 'Золото',       ticker: 'GLDRUB_TOM', color: '#ffb800', ret: 10, risk: 15 },
-  cash:   { name: 'Валюта',       ticker: 'USD/RUB',    color: '#a78bfa', ret: 5,  risk: 6  }
+  stocks: {
+    name: 'Акции РФ',
+    ticker: 'IMOEX',
+    color: '#00c805',
+    ret: 12, risk: 22,
+    reference: 'IMOEX ≈ 2750'
+  },
+  bonds: {
+    name: 'Облигации РФ',
+    ticker: 'RGBI',
+    color: '#4a9eff',
+    ret: 8, risk: 8,
+    reference: 'RGBI ≈ 108'
+  },
+  gold: {
+    name: 'Золото',
+    ticker: 'GLDRUB_TOM',
+    color: '#ffb800',
+    ret: 10, risk: 15,
+    reference: 'Золото ≈ 7500 ₽/г'
+  },
+  cash: {
+    name: 'Валюта',
+    ticker: 'USD/RUB',
+    color: '#a78bfa',
+    ret: 5, risk: 6,
+    reference: 'USD/RUB ≈ 92'
+  }
 };
 
 // ============ UI ============
@@ -230,267 +233,32 @@ retEl.oninput  = () => document.getElementById('retVal').textContent  = retEl.va
 sumEl.oninput  = () => document.getElementById('sumVal').textContent  =
   new Intl.NumberFormat('ru-RU').format(sumEl.value) + ' ₽';
 
-// ============ CORS-ПРОКСИ ============
-// Пробуем несколько прокси по очереди, пока один не сработает
-async function fetchMOEX(target) {
-  const proxies = [
-    'https://corsproxy.io/?url=' + encodeURIComponent(target),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(target),
-    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(target)
-  ];
-
-  for (let i = 0; i < proxies.length; i++) {
-    try {
-      const res = await fetch(proxies[i]);
-      if (!res.ok) continue;
-      const json = await res.json();
-      if (json && (json.marketdata || json.securities)) {
-        return json;
-      }
-    } catch (e) {
-      console.log('Прокси ' + i + ' не сработал');
-      continue;
-    }
-  }
-  throw new Error('Все прокси не сработали');
-}
-
-// ============ MOEX ============
-async function moexLastPrice(engine, market, board, secid) {
-  const target = `https://iss.moex.com/iss/engines/${engine}/markets/${market}/boards/${board}/securities/${secid}.json?iss.meta=off`;
-  const json = await fetchMOEX(target);
-  const md = json.marketdata;
-  if (!md || !md.data || !md.data.length) return null;
-  const cols = md.columns;
-  const iLast = cols.indexOf('LAST');
-  const iClose = cols.indexOf('LCURRENTPRICE');
-  const row = md.data.find(r => r[iLast] != null || r[iClose] != null) || md.data[0];
-  return { last: row[iLast] ?? row[iClose] ?? null };
-}
-
-async function fetchMarketData() {
-  const tasks = [
-    moexLastPrice('stock', 'index', 'SNDX', 'IMOEX').catch(() => null),
-    moexLastPrice('stock', 'index', 'SNDX', 'RGBI').catch(() => null),
-    moexLastPrice('currency', 'selt', 'CETS', 'GLDRUB_TOM').catch(() => null),
-    moexLastPrice('currency', 'selt', 'CETS', 'USD000UTSTOM').catch(() => null)
-  ];
-  const [imoex, rgbi, gold, usd] = await Promise.all(tasks);
-  return {
-    imoex: imoex?.last ?? null,
-    rgbi:  rgbi?.last  ?? null,
-    gold:  gold?.last  ?? null,
-    usd:   usd?.last   ?? null
-  };
-}
-
-// ============ ЛОГИКА ============
-function recommendPortfolio(riskLevel, targetReturn) {
-  const r = Math.min(Math.max(riskLevel, 1), 10);
-  const t = Math.min(Math.max(targetReturn, 4), 30);
-
-  let stocks = r * 8 + (t - 8) * 2;
-  let bonds  = Math.max(0, 80 - r * 7);
-  let gold   = Math.max(0, 18 - Math.abs(r - 5) * 3);
-  let cash   = Math.max(0, 25 - r * 2);
-
-  stocks = Math.min(stocks, 80);
-  bonds  = Math.min(bonds, 75);
-
-  const sum = stocks + bonds + gold + cash;
-  stocks = stocks / sum * 100;
-  bonds  = bonds  / sum * 100;
-  gold   = gold   / sum * 100;
-  cash   = cash   / sum * 100;
-
-  const weights = { stocks, bonds, gold, cash };
-  let expRet = 0, expRisk = 0;
-  for (const k in ASSETS) {
-    expRet  += weights[k] / 100 * ASSETS[k].ret;
-    expRisk += weights[k] / 100 * ASSETS[k].risk;
-  }
-  return { weights, expRet, expRisk };
-}
-
-// ============ ОТРИСОВКА ============
-function fmtMoney(n) {
-  return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(n) + ' ₽';
-}
-
-function render(weights, expRet, expRisk, totalSum, market) {
-  document.getElementById('totalValue').textContent = fmtMoney(totalSum);
-
-  const bar = document.getElementById('bar');
-  bar.innerHTML = '';
-  for (const k in ASSETS) {
-    const w = weights[k];
-    if (w < 0.5) continue;
-    const div = document.createElement('div');
-    div.style.width = w + '%';
-    div.style.background = ASSETS[k].color;
-    if (w >= 8) div.textContent = w.toFixed(0) + '%';
-    bar.appendChild(div);
-  }
-
-  const wrap = document.getElementById('assets');
-  wrap.innerHTML = '';
-  for (const k in ASSETS) {
-    const a = ASSETS[k];
-    const w = weights[k];
-    const amount = totalSum * w / 100;
-
-    let priceLine = '';
-    if (k === 'stocks' && market.imoex) priceLine = `IMOEX: ${market.imoex.toFixed(2)}`;
-    if (k === 'bonds'  && market.rgbi)  priceLine = `RGBI: ${market.rgbi.toFixed(2)}`;
-    if (k === 'gold'   && market.gold)  priceLine = `Золото: ${market.gold.toFixed(2)} ₽/г`;
-    if (k === 'cash'   && market.usd)   priceLine = `USD/RUB: ${market.usd.toFixed(2)}`;
-
-    const row = document.createElement('div');
-    row.className = 'asset-row';
-    row.innerHTML = `
-      <div class="asset-dot" style="background:${a.color}"></div>
-      <div class="asset-info">
-        <div class="asset-name">${a.name}</div>
-        <div class="asset-ticker">${priceLine || a.ticker}</div>
-      </div>
-      <div>
-        <div class="asset-pct">${w.toFixed(1)}%</div>
-        <div class="asset-amount">${fmtMoney(amount)}</div>
-      </div>
-    `;
-    wrap.appendChild(row);
-  }
-
-  document.getElementById('expRet').textContent  = expRet.toFixed(1) + '%';
-  document.getElementById('expRisk').textContent = expRisk.toFixed(1) + '%';
-  document.getElementById('result').style.display = 'block';
-}
-
-// ============ ГЛАВНАЯ ============
-async function buildPortfolio() {
-  const btn = document.getElementById('buildBtn');
-  const status = document.getElementById('status');
-
-  btn.disabled = true;
-  btn.textContent = 'Загружаем данные MOEX...';
-  status.className = 'status';
-  status.textContent = 'Подключаемся к MOEX через прокси...';
-
-  let market = { imoex: null, rgbi: null, gold: null, usd: null };
-
-  try {
-    market = await fetchMarketData();
-    const ok = market.imoex || market.rgbi || market.gold || market.usd;
-    if (ok) {
-      status.className = 'status live';
-      status.textContent = 'Данные MOEX загружены';
-    } else {
-      status.textContent = 'MOEX ответил пусто — биржа закрыта, используем учебные значения';
-    }
-  } catch (e) {
-    status.textContent = 'MOEX недоступен — используем учебные значения';
-    console.error(e);
-  }
-
-  const { weights, expRet, expRisk } = recommendPortfolio(+riskEl.value, +retEl.value);
-  render(weights, expRet, expRisk, +sumEl.value, market);
-
-  btn.disabled = false;
-  btn.textContent = 'Пересчитать портфель';
-}
-
-window.addEventListener('load', () => {
-  document.getElementById('riskVal').textContent = riskEl.value + ' / 10';
-  document.getElementById('retVal').textContent  = retEl.value + '% годовых';
-  document.getElementById('sumVal').textContent  =
-    new Intl.NumberFormat('ru-RU').format(sumEl.value) + ' ₽';
-});
-
-// ============ UI ============
-const riskEl = document.getElementById('risk');
-const retEl  = document.getElementById('ret');
-const sumEl  = document.getElementById('sum');
-
-riskEl.oninput = () => document.getElementById('riskVal').textContent = riskEl.value + ' / 10';
-retEl.oninput  = () => document.getElementById('retVal').textContent  = retEl.value + '% годовых';
-sumEl.oninput  = () => document.getElementById('sumVal').textContent  =
-  new Intl.NumberFormat('ru-RU').format(sumEl.value) + ' ₽';
-
-// ============ MOEX ISS API ============
-// Документация: https://iss.moex.com/iss/reference/
-const MOEX = 'https://iss.moex.com/iss';
-
-// Универсальная функция: получить marketdata по тикеру
-async function moexLastPrice(engine, market, board, secid) {
-  const url = `${MOEX}/engines/${engine}/markets/${market}/boards/${board}/securities/${secid}.json?iss.meta=off`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('MOEX ' + res.status);
-  const json = await res.json();
-  const md = json.marketdata;
-  if (!md || !md.data || !md.data.length) return null;
-  const cols = md.columns;
-  const iLast = cols.indexOf('LAST');
-  const iClose = cols.indexOf('LCURRENTPRICE');
-  const iPrev = cols.indexOf('PREVPRICE');
-  const row = md.data.find(r => r[iLast] != null || r[iClose] != null) || md.data[0];
-  return {
-    last: row[iLast] ?? row[iClose] ?? null,
-    prev: row[iPrev] ?? null
-  };
-}
-
-// Загрузка индексов и валют параллельно
-async function fetchMarketData() {
-  const tasks = [
-    // IMOEX — индекс Мосбиржи (акции)
-    moexLastPrice('stock', 'index', 'SNDX', 'IMOEX')
-      .catch(() => null),
-    // RGBI — индекс гособлигаций
-    moexLastPrice('stock', 'index', 'SNDX', 'RGBI')
-      .catch(() => null),
-    // Золото в рублях за грамм (TOM)
-    moexLastPrice('currency', 'selt', 'CETS', 'GLDRUB_TOM')
-      .catch(() => null),
-    // USD/RUB
-    moexLastPrice('currency', 'selt', 'CETS', 'USD000UTSTOM')
-      .catch(() => null)
-  ];
-  const [imoex, rgbi, gold, usd] = await Promise.all(tasks);
-  return {
-    imoex: imoex?.last ?? null,
-    rgbi:  rgbi?.last  ?? null,
-    gold:  gold?.last  ?? null,
-    usd:   usd?.last   ?? null,
-    fetchedAt: new Date().toISOString()
-  };
-}
-
 // ============ ЛОГИКА ПОДБОРА ============
 function recommendPortfolio(riskLevel, targetReturn) {
   const r = Math.min(Math.max(riskLevel, 1), 10);
   const t = Math.min(Math.max(targetReturn, 4), 30);
 
-  // Эвристика под российский рынок:
-  // - Акции: до 80% при высоком риске
-  // - Облигации: база при низком риске
-  // - Золото: защита, пик в середине
-  // - Валюта: защита от девальвации рубля, больше при низком риске
+  // Эвристика:
+  // - Акции растут с риском и целевой доходностью, максимум 80%
+  // - Облигации доминируют при низком риске
+  // - Золото — защитный актив, пик в середине шкалы риска
+  // - Валюта — защита от девальвации, больше при низком риске
   let stocks = r * 8 + (t - 8) * 2;
   let bonds  = Math.max(0, 80 - r * 7);
   let gold   = Math.max(0, 18 - Math.abs(r - 5) * 3);
   let cash   = Math.max(0, 25 - r * 2);
 
-  // Ограничения
   stocks = Math.min(stocks, 80);
   bonds  = Math.min(bonds, 75);
 
-  // Нормализация
+  // Нормализация к 100%
   const sum = stocks + bonds + gold + cash;
   stocks = stocks / sum * 100;
   bonds  = bonds  / sum * 100;
   gold   = gold   / sum * 100;
   cash   = cash   / sum * 100;
 
+  // Ожидаемые метрики портфеля
   const weights = { stocks, bonds, gold, cash };
   let expRet = 0, expRisk = 0;
   for (const k in ASSETS) {
@@ -505,11 +273,10 @@ function fmtMoney(n) {
   return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(n) + ' ₽';
 }
 
-function render(weights, expRet, expRisk, totalSum, market) {
-  // Общая стоимость
+function render(weights, expRet, expRisk, totalSum) {
   document.getElementById('totalValue').textContent = fmtMoney(totalSum);
 
-  // Полоса
+  // Полоса распределения
   const bar = document.getElementById('bar');
   bar.innerHTML = '';
   for (const k in ASSETS) {
@@ -530,20 +297,13 @@ function render(weights, expRet, expRisk, totalSum, market) {
     const w = weights[k];
     const amount = totalSum * w / 100;
 
-    // Текущая цена с MOEX, если есть
-    let priceLine = '';
-    if (k === 'stocks' && market.imoex) priceLine = `IMOEX: ${market.imoex.toFixed(2)}`;
-    if (k === 'bonds'  && market.rgbi)  priceLine = `RGBI: ${market.rgbi.toFixed(2)}`;
-    if (k === 'gold'   && market.gold)  priceLine = `Золото: ${market.gold.toFixed(2)} ₽/г`;
-    if (k === 'cash'   && market.usd)   priceLine = `USD/RUB: ${market.usd.toFixed(2)}`;
-
     const row = document.createElement('div');
     row.className = 'asset-row';
     row.innerHTML = `
       <div class="asset-dot" style="background:${a.color}"></div>
       <div class="asset-info">
         <div class="asset-name">${a.name}</div>
-        <div class="asset-ticker">${priceLine || a.ticker}</div>
+        <div class="asset-ticker">${a.reference}</div>
       </div>
       <div>
         <div class="asset-pct">${w.toFixed(1)}%</div>
@@ -553,49 +313,19 @@ function render(weights, expRet, expRisk, totalSum, market) {
     wrap.appendChild(row);
   }
 
+  // Метрики
   document.getElementById('expRet').textContent  = expRet.toFixed(1) + '%';
   document.getElementById('expRisk').textContent = expRisk.toFixed(1) + '%';
   document.getElementById('result').style.display = 'block';
 }
 
-// ============ ГЛАВНАЯ ФУНКЦИЯ ============
-async function buildPortfolio() {
-  const btn = document.getElementById('buildBtn');
-  const status = document.getElementById('status');
-  const errorEl = document.getElementById('error');
-
-  btn.disabled = true;
-  btn.textContent = 'Загружаем данные MOEX...';
-  errorEl.style.display = 'none';
-  status.className = 'status';
-  status.textContent = 'Запрос к iss.moex.com...';
-
-  let market = { imoex: null, rgbi: null, gold: null, usd: null, fetchedAt: null };
-
-  try {
-    market = await fetchMarketData();
-    const ok = market.imoex || market.rgbi || market.gold || market.usd;
-    if (ok) {
-      status.className = 'status live';
-      status.textContent = 'Данные MOEX загружены';
-    } else {
-      status.textContent = 'MOEX не ответил, используем учебные значения';
-    }
-  } catch (e) {
-    status.textContent = 'Ошибка сети — используем учебные значения';
-  }
-
-  const { weights, expRet, expRisk } = recommendPortfolio(
-    +riskEl.value, +retEl.value
-  );
-
-  render(weights, expRet, expRisk, +sumEl.value, market);
-
-  btn.disabled = false;
-  btn.textContent = 'Пересчитать портфель';
+// ============ ГЛАВНАЯ ============
+function buildPortfolio() {
+  const { weights, expRet, expRisk } = recommendPortfolio(+riskEl.value, +retEl.value);
+  render(weights, expRet, expRisk, +sumEl.value);
 }
 
-// Автозапуск при открытии
+// Инициализация подписей при загрузке
 window.addEventListener('load', () => {
   document.getElementById('riskVal').textContent = riskEl.value + ' / 10';
   document.getElementById('retVal').textContent  = retEl.value + '% годовых';
